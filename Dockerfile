@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM golang:1.23-bookworm
 
 LABEL maintainer="Ondřej Beňuš"
 LABEL description="Claude Code CLI container - Unofficial"
@@ -6,7 +6,7 @@ LABEL version="1.0"
 LABEL org.opencontainers.image.licenses="MIT"
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y \
     nodejs \
     npm \
     curl \
@@ -22,10 +22,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Create directories with proper permissions for npm
-RUN mkdir -p /npm-cache && chmod 777 /npm-cache && \
-    mkdir -p /usr/local/lib/node_modules && chmod 777 /usr/local/lib/node_modules && \
-    mkdir -p /usr/local/bin && chmod 777 /usr/local/bin && \
-    mkdir -p /home/npm-global && chmod 777 /home/npm-global
+RUN mkdir -m 777 -p /npm-cache && \
+    mkdir -m 777 -p /usr/local/lib/node_modules \
+    mkdir -m 777 -p /usr/local/bin \
+    mkdir -m 777 -p /home/npm-global
 ENV npm_config_cache=/npm-cache
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
